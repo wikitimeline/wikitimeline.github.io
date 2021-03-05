@@ -1,30 +1,78 @@
 <!DOCTYPE html>
-<html lang ="en">
-<style>
-img {
-width: 50%;
-}
+<html lang="en">
 
-.yago_logo_pos {
-    text-align: center;
-    background-size: contain;
-    background-position: 50% 0;
-    background-repeat: no-repeat;
-    height: 100px;
-}
 
-</style>
-  <head>
-    <meta charset="UTF-8">
-    <meta name = "viewport" content = "width=device-width, inital-scale=1.0">
-    <title>Yago Timeline</title>
-    <link rel="yago icon" href="pic/logo.png">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, inital-scale=1.0">
+  <title>Yago Timeline</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 
-<body>
-  <div class = "yago_logo_pos">
-    <img src="pic/yago_logo.png" alt="yago_logo">
+<div id="homepage">
+
+  <!-- Nav -->
+  <div class="w3-bar w3-border w3-light-grey">
+    <button class="w3-bar-item w3-button"onclick="openTab('Home')">Home</a>
+    <button class="w3-bar-item w3-button w3-hover-green"onclick="openTab('About')">About</a>
+    <button class="w3-bar-item w3-button w3-hover-blue"onclick="openTab('Example')">Start with something fun</a>
+    <button class="w3-bar-item w3-button w3-hover-teal"onclick="openTab('Contributor')">Contributor</a>
   </div>
-</body>
-  <script src = "xxx.js"></script>
+
+  <div id="main">
+
+    <!-- home -->
+    <div id="Home" class="panel">
+      <link rel="yago icon" href="pic/logo.png">
+      <header>
+      </header>
+      <body>
+        <div class="yago_logo_pos">
+          <img src="pic/yago_logo.png" alt="yago_logo">
+          <style>
+            img {
+              width: 50%;
+            }
+          
+            .yago_logo_pos {
+              text-align: center;
+              background-size: contain;
+              background-position: 50% 0;
+              background-repeat: no-repeat;
+              height: 100px;
+            }
+          </style>
+        </div>
+      </body>
+     
+    </div>
+
+    <div id="About" class="panel" style="display:none">
+      <header>
+        <h1>About Yago </h1>
+        <p></p>
+      </header>
+    </div>
+
+    <div id="Example" class="panel"style="display:none" >
+      <header>
+        <h1>Example Timeline</h1>
+        <p></p>
+      </header>
+    </div>
+
+    <div id="Contributor" class="panel" style="display:none">
+      <header>
+        <h1>Contributor</h1>
+        <p></p>
+      </header>
+    </div>
+
+  </div>
+</div>
+
+<script src="xxx.js"></script>
+<script src="assets/js/Nav.js"></script>
+
+
 </html>
