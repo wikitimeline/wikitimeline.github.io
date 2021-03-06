@@ -1,0 +1,12 @@
+
+  img {
+    width: 50%;
+  }
+
+  .yago_logo_pos {
+    text-align: center;
+    background-size: contain;
+    background-position: 50% 0;
+    background-repeat: no-repeat;
+    height: 100px;
+  }
