@@ -3,6 +3,11 @@
     width: 50%;
   }
 
+  .wrap
+  {
+    padding: 15px;
+  }
+
   .yago_logo_pos {
     text-align: center;
     background-size: contain;
@@ -46,4 +51,3 @@
   .searchbar button:hover {
     background: #ccc;
   }
-
