@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="style.css">
   <link rel="yago icon" href="pic/logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 
@@ -14,11 +15,18 @@
 
   <!-- Nav -->
   <div class="w3-bar w3-border w3-light-grey">
-    <button class="w3-bar-item w3-button"onclick="openTab('Home')">Home</a>
-    <button class="w3-bar-item w3-button w3-hover-green"onclick="openTab('About')">About</a>
-    <button class="w3-bar-item w3-button w3-hover-blue"onclick="openTab('Example')">Start with something fun</a>
-    <button class="w3-bar-item w3-button w3-hover-teal"onclick="openTab('Contributor')">Contributor</a>
+    <a href = "#Home" class="w3-bar-item w3-button"onclick="openTab('Home')">Home</a>
+    <a href = "#About"  class="w3-bar-item w3-button w3-hover-green"onclick="openTab('About')">About</a>
+    <a href = "#Example" class="w3-bar-item w3-button w3-hover-blue"onclick="openTab('Example')">Start with something fun</a>
+    <a href= "#Contributor" class="w3-bar-item w3-button w3-hover-teal"onclick="openTab('Contributor')">Contributor</a>
+      <div class="searchbar">
+        <form action="/xxxx.js">
+          <input type="text" placeholder="Search.." name="search">
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
   </div>
+  
 
   <div id="main">
 
@@ -33,13 +41,14 @@
             <img src="pic/yago_logo.png" alt="yago_logo" href>
           </a>
         </div>
+       
       </body>
 
     </div>
 
     <div id="About" class="panel" style="display:none">
       <header>
-        <h1>About Yago </h1>
+        <h1>About Yago Timelines </h1>
         <p></p>
       </header>
     </div>
