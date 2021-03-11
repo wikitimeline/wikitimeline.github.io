@@ -1,153 +1,258 @@
-<html>
-	<head>
-		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/d3-sparql@2.0.0/build/d3-sparql.min.js"></script>
-  		<script src="https://d3js.org/d3.v5.min.js"></script>
-  		<script src="https://d3js.org/d3-collection.v1.min.js"></script>
-  		<script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
-  		<script src="https://d3js.org/d3-request.v1.min.js"></script>
-		
-		<script type="text/javascript">
-
-	//using a CORS proxy https://cors-anywhere.herokuapp.com/ to avoid issue with cors and Yago server 
-	//need to find a better solution
-	var yagoUrl = 'https://cors-anywhere.herokuapp.com/https://yago-knowledge.org/sparql/query';
-	//var wikidataUrl = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'
-
-	const queryString = window.location.search;
-	const urlParams = new URLSearchParams(queryString);
-	const subject = urlParams.get('subj');
-
-	var data2;
-
-	google.charts.load('current', {'packages':['timeline']});
-	google.charts.setOnLoadCallback(loadData);
-
-	function loadData(){
-		data2 = new google.visualization.DataTable();
-
-    	//data2.addColumn('string', 'ID');
-		data2.addColumn({ type: 'string', label: 'Predicate', id: 'pName'});
-		data2.addColumn({ type: 'string', label: 'Object', id: 'oName'});
-		data2.addColumn({ type: 'date', label: 'Start Date', id: 'start'});
-		data2.addColumn({ type: 'date', label: 'End Date', id: 'end'});
-		data2.addColumn({ type: 'string', role: 'tooltip', id: 'link', 'p': {'html': true} });
-  
-
-	}
-
-	//First SPARQL query for non-star triples
-	var datesQuery = `
-		PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-		PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-		SELECT * WHERE {
-  			<`+subject+`> ?pred ?obj .
-  			FILTER ( (datatype(?obj) = xsd:date) || (datatype(?obj) = xsd:gYear) || (datatype(?obj) = xsd:gYearMonth) ).
-  			?pred rdfs:label ?pName .
-  			#?obj rdfs:label ?oName .
-  			#FILTER(LANG(?oName)='en').
-  		} 
-		LIMIT 50
-	`;
-
-d3.sparql(yagoUrl, datesQuery).then(function(data) {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, inital-scale=1.0">
+  <title>Yago Timeline</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="yago icon" href="pic/logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 
 
-	google.charts.load('current', {'packages':['timeline']});
-	google.charts.setOnLoadCallback(loadData2);
+<div id="homepage">
+
+  <!-- Nav -->
+  <div class="w3-bar w3-border w3-light-grey">
+    <a href = "#Home" class="w3-bar-item w3-button"onclick="openTab('Home')">Home</a>
+    <a href = "#About"  class="w3-bar-item w3-button w3-hover-green"onclick="openTab('About')">About</a>
+    <a href = "#Example" class="w3-bar-item w3-button w3-hover-blue"onclick="openTab('Example')">Start with something fun</a>
+    <a href= "#Contributor" class="w3-bar-item w3-button w3-hover-teal"onclick="openTab('Contributor')">Contributor</a>
+      <div class="searchbar">
+        <form action="/xxxx.js">
+          <input type="text" placeholder="Search.." name="search">
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
+  </div>
 
 
-	function loadData2(){
+  <div id="main">
 
-		data.forEach(function (arrayItem) {
-			var startDate = new Date(arrayItem.obj);
-			var endDate = new Date(startDate.getTime()+1000*60*60*24);
-			
-	   		data2.addRows([
-	   			[ String(arrayItem.pName), String(arrayItem.pName),
-	 			   startDate, endDate, String(subject) ]
-	   		]);
-		});
+    <!-- home -->
+    <div id="Home" class="panel">
+      <link rel="yago icon" href="pic/logo.png">
+      <header>
+      </header>
+      <body>
+        <div class="yago_logo_pos">
+          <a target="_blank" href="https://yago-knowledge.org/">
+            <img src="pic/yago_logo.png" alt="yago_logo" href>
+          </a>
+        </div>
 
-		//console.log(data2);
-	};
+      </body>
 
-});
+    </div>
 
-    //Second SPARQLStar query
-    var starQuery = `
-    	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-		SELECT * WHERE {
-  			<< <`+subject+`> ?pred ?obj >> <http://schema.org/startDate> ?start .
-			OPTIONAL{ << <`+subject+`> ?pred ?obj >> <http://schema.org/endDate> ?end .}
-  			?pred rdfs:label ?pName .
-  			?obj rdfs:label ?oName .
-  			FILTER(LANG(?oName)='en').
-		} 
-		LIMIT 70
-    	`;
+    <div id="About" class="panel" style="display:none">
+        <link rel="yago icon" href="pic/logo.png">
+        <body>
+          <div class="yago_logo_pos">
+            <a target="_blank" href="https://yago-knowledge.org/">
+              <img src="pic/yago_logo.png" alt="yago_logo" href>
+            </a>
+          </div>
+          <br><br><br><br>
+          <div class = "wrap">
+            <div class = "content">
+              <h2>Getting Started</h2>
+              <ul class = "browser-default">
+                <li>
+                  <a href = "#what-is-yago">What is Yago?</a>
+                </li>
+                <br>
+                <li>
+                  <a href = "#what-is-yago-timeline">What is Yago Timeline?</a>
+                </li>
+                <br>
+                <li>
+                  <a href = "#example-of-timeline">What can I do with Yago Timeline?</a>
+                </li>
+                <br>
+                <li>
+                  <a href = "#demo-of-using">How to use Yago Timeline?</a>
+                </li>
+              </ul>
+              <br><br>
+              <h3 id = "what-is-yago">What is Yago?</h3>
+              <p>
 
-d3.sparql(yagoUrl, starQuery).then(function(data) {
-    
-	console.log(data);
-	////////////////////////////
-	google.charts.load('current', {'packages':['timeline']});
-	google.charts.setOnLoadCallback(drawChart);
-	
+                YAGO is a knowledge base, i.e., a database with knowledge about the
+                real world. YAGO contains both entities (such as movies, people, cities,
+                countries, etc.) and relations between these entities (who played in
+                which movie, which city is located in which country, etc.). All in all,
+                YAGO contains more than 50 million entities and 2 billion facts.
 
-    function drawChart() {
+              </p>
+              <p>
 
-	    //var today = new Date();
-	    //today = Date.now();
-	    data.forEach(function (arrayItem) {
-	    	var startDate = new Date(arrayItem.start);
-			var endDate = arrayItem.end ? new Date(arrayItem.end) : new Date(startDate.getTime()+1000*60*60*24);
-	    	data2.addRows([
-	    		[ String(arrayItem.pName), String(arrayItem.oName),
-		 		  // startDate, endDate , String("http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj="+arrayItem.obj) ] //new Date(today) ] 
-                   startDate, endDate , String("http://yagoTimeline.github.io/index.html?subj="+arrayItem.obj) ] //new Date(today) ]
-	    	]);
-	    });
+                YAGO arranges its entities into classes:
+                Elvis Presley belongs to the class of people,
+                Paris belongs to the class of cities, and so on.
+                These classes are arranged in a taxonomy: The
+                class of cities is a subclass of the class of populated places,
+                this class is a subclass of geographical locations, etc.
 
-		// sort startDate column
-    	data2.sort({
-      		column: 2,
-      		desc: false
-    	});
+              </p>
 
-	    console.log(data2);
-	       
-	    var options = {
-		    //height: 1000,
-		    timeline: {
-		    	groupByRowLabel: false
-		    }
-		};
+              <p>
 
-		var chart = new google.visualization.Timeline(document.getElementById('chart_div'));
+                YAGO also defines which relations can hold between which entities:
+                birthPlace, e.g., is a relation that can hold between a person and a place.
+                The definition of these relations, together with the taxonomy is called the
+                ontology.
 
-		google.visualization.events.addListener(chart, 'select', function () {
-    		var selection = chart.getSelection();
-    		if (selection.length > 0) {
-      			window.open(data2.getValue(selection[0].row, 4), '_self'); //to open in a new tab use -> '_blank');
-      			console.log(data2.getValue(selection[0].row, 4));
-    		}
-  		});
+              </p>
 
-	    chart.draw(data2, options);
+              <br><br>
+              <h3 id = "what-is-yago-timeline">What is Yago Timeline?</h3>
+              <p>
+                Yago timeline is a tool which retrieves data from the user about
+                a particular entity and obtain facts about that entity from the YAGO database.
+                Using these facts and information, we develop a timeline graph and
+                display on the graph.
+              </p>
 
-	};
-});
-	
-		</script>
-	</head>
-	<body>
-		<h3>Insert a resource name (e.g. "Albert_Einstein" or "European_Union" or "India") to start exploring timelines:</h3>
-		<input type="text" id="text" />
-		<!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" /> !-->
-        <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/index.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" />
-		<p>Or click on the items in the timeline below:</p>
-		<div id="chart_div" style="overflow-x: hidden; overflow-y: scroll; height: 800px; "></div>
-	</body>
+              <p>
+                It also allows allow the users to access various relationships
+                of the entity and navigate from one entity to another.
+              </p>
+
+
+              <br><br>
+              <h3 id = "example-of-timeline">What can I do with Yago Timeline?</h3>
+              <p>
+                Click on the "Start with something fun" button above. Try out the functions on
+                our example timeline.
+              </p>
+
+              <br><br>
+              <h3 id = "demo-of-using">How to use Yago Timeline?</h3>
+              <p>
+                Here is a short video instruction on how to explore our Yago Timeline.<br>
+                Explore more with your creativity.
+              </p>
+
+            </div>
+          </div>
+        </body>
+    </div>
+
+    <div id="Example" class="panel"style="display:none" >
+      <header>
+        <h1>Example Timeline</h1>
+        <p></p>
+      </header>
+    </div>
+
+    <div id="Contributor" class="panel" style="display:none">
+      <header>
+        <h1>Contributor</h1>
+        <h2>Our Team</h2>
+
+
+<!-- MEMBER 1 -->
+        <div class = "wrap">
+          <div class="row">
+            <div class="column">
+              <div class="card">
+
+                <img src="pic/Tanmay.jpg" alt="[[Image Error]]" style="width:25%""height: 30%">
+
+                <div class="container">
+                  <h2>Tanmay Kaushik</h2>
+                  <p class="title">Product Owner &amp; Front-End Developer</p>
+                  <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p>-->
+                  <p>kaushikt@tcd.ie</p>
+                  <!--<p><button class="button">Contact</button></p>-->
+                </div>
+              </div>
+            </div>
+
+<!-- MEMBER 2 -->
+            <div class="column">
+              <div class="card">
+                <img src="img2.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
+                <div class="container">
+                  <h2>David Kavanagh</h2>
+                  <p class="title">Back-End Developer</p>
+                 <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p>-->
+                  <p>kavanad9@tcd.ie</p>
+                   <!--<p><button class="button">Contact</button></p>-->
+                </div>
+              </div>
+            </div>
+
+<!-- MEMBER 3 -->
+            <br>
+            <div class="column">
+              <div class="card">
+                <img src="pic/HLJ.jpeg" alt="Hailing" style="width:25%""height: 30%" >
+                <div class="container">
+                  <h2>Hailing Jiang</h2>
+                  <p class="title">Designer &amp; Front-End Developer </p>
+                  <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p>-->
+                  <p>jiangh@tcd.ie</p>
+                   <!--<p><button class="button">Contact</button></p>-->
+                </div>
+              </div>
+            </div>
+
+
+
+<!-- MEMBER 4 -->
+            <div class="column">
+              <div class="card">
+                <img src="img3.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
+                <div class="container">
+                  <h2>Brian Bredican</h2>
+                  <p class="title">Designer</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p>-->
+                  <p>bredicab@tcd.ie</p>
+                   <!--<p><button class="button">Contact</button></p>-->
+                </div>
+              </div>
+            </div>
+
+<!-- MEMBER 5 -->
+            <div class="column">
+              <div class="card">
+                <img src="pic/MG.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
+                <div class="container">
+                  <h2>Matthew Grouse</h2>
+                  <p class="title">Designer</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p>-->
+                  <p>grousem@tcd.ie</p>
+                   <!--<p><button class="button">Contact</button></p>-->
+                </div>
+              </div>
+            </div>
+
+
+<!-- MEMBER 6 -->
+            <div class="column">
+              <div class="card">
+                <img src="img3.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
+                <div class="container">
+                  <h2>Dáithí Geary</h2>
+                  <p class="title">Designer</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p>-->
+                  <p>dgeary@tcd.ie</p>
+                   <!--<p><button class="button">Contact</button></p>-->
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </header>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/Nav.js"></script>
+
 </html>
