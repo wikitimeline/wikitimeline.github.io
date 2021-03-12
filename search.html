@@ -11,7 +11,8 @@
 
 	//using a CORS proxy https://cors-anywhere.herokuapp.com/ to avoid issue with cors and Yago server 
 	//need to find a better solution
-	var yagoUrl = 'https://cors-anywhere.herokuapp.com/https://yago-knowledge.org/sparql/query';
+	//var yagoUrl = 'https://cors-anywhere.herokuapp.com/https://yago-knowledge.org/sparql/query';
+    var yagoUrl = 'https://cors.bridged.cc/https://yago-knowledge.org/sparql/query'
 	//var wikidataUrl = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'
 
 	const queryString = window.location.search;
@@ -107,6 +108,7 @@ d3.sparql(yagoUrl, starQuery).then(function(data) {
 	    		[ String(arrayItem.pName), String(arrayItem.oName),
 		 		  // startDate, endDate , String("http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj="+arrayItem.obj) ] //new Date(today) ] 
                    startDate, endDate , String("http://yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] //new Date(today) ]
+
 	    	]);
 	    });
 
@@ -147,7 +149,8 @@ d3.sparql(yagoUrl, starQuery).then(function(data) {
         <a href='https://cors-anywhere.herokuapp.com/'> Please use the following link before entering a query</a>
 		<input type="text" id="text" />
 		<!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" /> !-->
-        <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" />
+         <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" />
+
 		<p>Or click on the items in the timeline below:</p>
 		<div id="chart_div" style="overflow-x: hidden; overflow-y: scroll; height: 800px; "></div>
 	</body>
