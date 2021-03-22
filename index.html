@@ -19,12 +19,12 @@
     <a href = "#About"  class="w3-bar-item w3-button w3-hover-green"onclick="openTab('About')">About</a>
     <a href = "#Example" class="w3-bar-item w3-button w3-hover-blue"onclick="openTab('Example')">Start with something fun</a>
     <a href= "#Contributor" class="w3-bar-item w3-button w3-hover-teal"onclick="openTab('Contributor')">Contributor</a>
-      <div class="searchbar">
-        <form action="/xxxx.js">
-          <input type="text" placeholder="Search.." name="search">
-          <button type="submit"><i class="fa fa-search"></i></button>
-        </form>
-      </div>
+      <!--<div class="searchbar">-->
+        <!--<form action="/assets/js/Search.js + document.getElementById('text').value, '_self')"></form>-->
+         <!-- <input type="text" placeholder="Search.." name="search">
+          <button type="submit" id="btn" onclick="openTab('Timeline') + assets/js/Search.js.getElementById('text').value, '_self'"><i class="fa fa-search"></i></button>
+        
+      </div>-->
   </div>
 
 
@@ -45,9 +45,10 @@
       <body>
         
         <!-- David search bar -->
+        <div class="searchbar">
         <input type="text" placeholder="Enter a query..." id="text"/>
-        <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" /> 
-      
+        <button type="button" id="btn" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');"><i class="fa fa-search"></i></button>
+        </div>
       </body>
 
     </div>
@@ -159,7 +160,7 @@
         <h2>Our Team</h2>
 
 
-<!-- MEMBER 1 -->
+        <!-- MEMBER 1 -->
         <div class = "wrap">
           <div class="row">
             <div class="column">
@@ -177,7 +178,7 @@
               </div>
             </div>
 
-<!-- MEMBER 2 -->
+            <!-- MEMBER 2 -->
             <div class="column">
               <div class="card">
                 <img src="pic/David.png" alt="[[Image Error]]" style="width:25%""height: 30%" >
@@ -191,7 +192,7 @@
               </div>
             </div>
 
-<!-- MEMBER 3 -->
+            <!-- MEMBER 3 -->
             <br>
             <div class="column">
               <div class="card">
@@ -208,10 +209,10 @@
 
 
 
-<!-- MEMBER 4 -->
+            <!-- MEMBER 4 -->
             <div class="column">
               <div class="card">
-                <img src="img3.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
+                <img src="pic/brian.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
                 <div class="container">
                   <h2>Brian Bredican</h2>
                   <p class="title">Designer</p>
@@ -222,7 +223,7 @@
               </div>
             </div>
 
-<!-- MEMBER 5 -->
+            <!-- MEMBER 5 -->
             <div class="column">
               <div class="card">
                 <img src="pic/MG.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
@@ -237,7 +238,7 @@
             </div>
 
 
-<!-- MEMBER 6 -->
+            <!-- MEMBER 6 -->
             <div class="column">
               <div class="card">
                 <img src="img3.jpg" alt="[[Image Error]]" style="width:25%""height: 30%" >
@@ -256,9 +257,23 @@
         </div>
       </header>
     </div>
+    <div id="Timeline" class="panel" style="display:none">
+     
+      <h3>Insert a resource name (e.g. "Albert_Einstein" or "European_Union" or "India") to start exploring timelines:</h3> 
+      <p>Or click on the items in the timeline below:</p>
+     
+      <div id="chart_div" style="overflow-x: hidden; overflow-y: scroll; height: 800px; "></div>
+      </div>  
   </div>
 </div>
 
 <script src="assets/js/Nav.js"></script>
+<script src="assets/js/Search.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-sparql@2.0.0/build/d3-sparql.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+  <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+  <script src="https://d3js.org/d3-request.v1.min.js"></script>
 
 </html>

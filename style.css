@@ -27,21 +27,18 @@
 
   }
   .searchbar {
-    float: right;
+    float: center;
   }
   
   .searchbar input[type=text] {
     padding: 6px;
-    margin-top: 4px;
-    font-size: 17px;
-    border: none;
+    margin-top: 17.5%;
+    margin-left: 37.5%;
+    font-size: 17px; 
   }
   
   .searchbar button {
-    float: right;
     padding: 6px 10px;
-    margin-top: 4px;
-    margin-right: 16px;
     background: #ddd;
     font-size: 17px;
     border: none;
