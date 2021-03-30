@@ -135,8 +135,8 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 	    	data2.addRows([
 	    		[ String(arrayItem.pName), String(arrayItem.oName),
 		 		  // startDate, endDate , String("http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj="+arrayItem.obj) ] //new Date(today) ] 
-                 //startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ] //new Date(today) ]
-				 startDate, endDate , String("file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] //new Date(today) ]
+                 startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ] //new Date(today) ]
+				 //startDate, endDate , String("file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] //new Date(today) ]
 
 	    	]);
 	    });
@@ -178,8 +178,8 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 		<input type="text" id="text" />
 		
 		<!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" /> !-->
-        <!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://yago-knowledge.org/resource/' + (document.getElementById('text').value) + '&subj2=http://yago-knowledge.org/resource/India', '_self');" /> !-->
-		<input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" />
+        <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://yago-knowledge.org/resource/' + (document.getElementById('text').value) + '&subj2=http://yago-knowledge.org/resource/India', '_self');" />
+		<!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" /> !--?
 		
 		<p>Or click on the items in the timeline below:</p>
 		<div id="chart_div" style="overflow-x: hidden; overflow-y: scroll; height: 800px; "></div>
