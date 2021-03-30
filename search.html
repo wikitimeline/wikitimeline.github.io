@@ -9,16 +9,13 @@
 
 		<script type="text/javascript">
     
-	var wikiData = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'
+	var wikiData = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'		// Link to access wiki data SPARQL database
 
-	//var yagoUrl = 'https://cors.bridged.cc/https://yago-knowledge.org/sparql/query'
+	const queryString = window.location.search;										// returns: ?subj=...								
 
-	const queryString = window.location.search;
 	const urlParams = new URLSearchParams(queryString);
-	const subject = urlParams.get('subj');
+	const subject = urlParams.get('subj');											// isolates subj eg: https://www.wikidata.org/wiki/Q937
 	
-	
-
 	var data2;
 
 	google.charts.load('current', {'packages':['timeline']});
@@ -37,7 +34,8 @@
 
 	}
 
-	//First SPARQL query for non-star triples
+	// First SPARQL query for non-star triples
+	// retrieves birth/start date & death/end date
 	var datesQuery = `
 		PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 		PREFIX wikibase: <http://wikiba.se/ontology#>
@@ -73,32 +71,11 @@ d3.sparql(wikiData, datesQuery).then(function(data) {
 	 			   startDate, endDate, String(subject) ]
 	   		]);
 		});
-
-		//console.log(data2);
 	};
-
-	/*const subject2 = urlParams.get('subj2');
-
-	var starQuery2 = `
-    	PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-		SELECT * WHERE {
-  			<< <`+subject2+`> ?pred ?obj >> <http://schema.org/startDate> ?start .
-			OPTIONAL{ << <`+subject2+`> ?pred ?obj >> <http://schema.org/endDate> ?end .}
-  			?pred rdfs:label ?pName .
-  			?obj rdfs:label ?oName .
-  			FILTER(LANG(?oName)='en').
-		} 
-		LIMIT 70
-    	`; 
-
-d3.sparql(yagoUrl, starQuery2).then(function(data) {
-	console.log("We got data from second QUERY:")
-	console.log(data)
-}) */
-
 });
 
     //Second SPARQLStar query
+	// Finds data between birth/start date & death/end date or present date
     var starQuery = `
     	SELECT DISTINCT ?pred ?pName ?obj ?oName ?start ?end WHERE {
   			<`+subject+`> ?pred ?statement.
@@ -133,26 +110,25 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 			var endDate = arrayItem.end ? new Date(arrayItem.end) : new Date(startDate.getTime()+1000*60*60*24);
 	    	data2.addRows([
 	    		[ String(arrayItem.pName), String(arrayItem.oName),
-		 		  // startDate, endDate , String("http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj="+arrayItem.obj) ] //new Date(today) ] 
-                 startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ] //new Date(today) ]
-				 //startDate, endDate , String("file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] //new Date(today) ]
+                 startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ]	// Allows new timelines to be clicked which then shows new data for this timeline
+				 //startDate, endDate , String("file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] // local copy of file on David's machine
 
 	    	]);
 	    });
 
 		// sort startDate column
+		// Ensures data is displayed in chronological order
+		// May already come in chronological order, need to investigate 
     	data2.sort({
       		column: 2,
       		desc: false
     	});
 
-	    console.log(data2);
-
+		// Options for google charts visualisation
 	    var options = {
-		    //height: 1000,
-		    timeline: {
-		    	groupByRowLabel: false
-		    }
+			timeline: { groupByRowLabel: false },		//Prevents timelines being drawn on same line			
+			backgroundColor: '#ffd'						//Sets background color of chart
+
 		};
 
 		var chart = new google.visualization.Timeline(document.getElementById('chart_div'));
@@ -178,11 +154,10 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 		<br>
 		<input type="text" id="text" />
 		
-		<!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://fabriziorlandi.net/sparql-epoch/GTimeline.html?subj=http://yago-knowledge.org/resource/' + document.getElementById('text').value, '_self');" /> !-->
-         <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" /> 
-		<!-- <input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" /> !-->
+        <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" /> 
+		<!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" /> !-->
 		
 		<p>Or click on the items in the timeline below:</p>
-		<div id="chart_div" style="overflow-x: hidden; overflow-y: scroll; height: 800px; "></div>
+		<div id="chart_div" style="overflow-x: hidden; overflow-y: scroll; height: 85%; width: 98%; "></div>
 	</body>
 </html> 
