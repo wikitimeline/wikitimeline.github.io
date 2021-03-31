@@ -105,9 +105,14 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 
 	    //var today = new Date();
 	    //today = Date.now();
+		if(data.length==0)					//Need to print something to web-page rather than to console
+		{
+			console.log("Invalid query");
+			return;
+		}
 	    data.forEach(function (arrayItem) {
 	    	var startDate = new Date(arrayItem.start);
-			var endDate = arrayItem.end ? new Date(arrayItem.end) : new Date(startDate.getTime()+1000*60*60*24);
+				var endDate = arrayItem.end ? new Date(arrayItem.end) : new Date(startDate.getTime()+1000*60*60*24);
 	    	data2.addRows([
 	    		[ String(arrayItem.pName), String(arrayItem.oName),
                  startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ]	// Allows new timelines to be clicked which then shows new data for this timeline
@@ -149,15 +154,56 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 		</script>
 	</head>
 	<body>
-		<h3>Insert a resource name (e.g. "Q937" (Albert_Einstein) or "Q458" (European_Union) or "Q668" (India) ) to start exploring timelines:</h3>
-		<a href='https://www.wikidata.org/wiki/Special:Search' target="_blank">Use this website to see what code your query responds to in the wikidata SPARQL databse</a>
-		<br>
-		<input type="text" id="text" />
-		
-        <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" /> 
-		<!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('text').value, '_self');" /> !-->
+		<h3>Insert a resource name (e.g. "Albert_Einstein" or "European_Union" etc), select the corresponding query from the drop down list and press "Submit" to start exploring timelines:</h3>
+		<input type="text" class="searchbox" id="text" />
+		<input type='hidden' id='textID' />
+
+        <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> 
+		<!-- <input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> !-->
 		
 		<p>Or click on the items in the timeline below:</p>
 		<div id="chart_div" style="overflow-x: hidden; overflow-y: scroll; height: 85%; width: 98%; "></div>
+		
+
+		<!-- Search wikiData SPARQL database and retrieve corrsepond Qxyz-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+		
+		<script type="text/javascript">
+		$(".searchbox").autocomplete({
+		    source: function(request, response) {
+		        console.log(request.term);
+		        $.ajax({
+		            url: "https://www.wikidata.org/w/api.php",
+		            dataType: "jsonp",
+		            data: {
+		                'action': "wbsearchentities",
+		                'format': "json",
+				'language': "en",
+		                'search': request.term
+		            },
+		            success: function(data) {
+		                //response(data.search);
+				response( $.map(data.search, function(item) {
+					return {
+						label: item.label + " (" + item.description + ")",
+						value: item.label,
+						id: item.id,
+						description: item.description
+					}
+				}));
+		            }
+		        });
+		    },
+		    minLength: 3,
+		    select: function( event, ui ) {
+				console.log( "Selected: " + ui.item.label + ", having the Wikidata entity: " + ui.item.id );
+				$("#text").val(ui.item.value);
+				$("#textID").val(ui.item.id); return false;
+		    }
+		});
+		</script>
 	</body>
 </html> 
+
