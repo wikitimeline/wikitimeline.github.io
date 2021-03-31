@@ -1,4 +1,10 @@
 
+  .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
   img {
     width: 45%;
   }
@@ -8,7 +14,7 @@
     padding: 15px;
   }
 
-  .yago_logo_pos {
+  .wikidata_logo_pos {
     text-align: center;
     background-size: contain;
     background-position: 50% 0;
