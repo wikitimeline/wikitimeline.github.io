@@ -128,8 +128,8 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 			var endDate = arrayItem.end ? new Date(arrayItem.end) : new Date(currentDate.getTime());
 	    	data2.addRows([
 	    		[ String(arrayItem.pName), String(arrayItem.oName),
-                 //startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ]	// Allows new timelines to be clicked which then shows new data for this timeline
-				 startDate, endDate , String("file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] // local copy of file on David's machine
+                 startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ]	// Allows new timelines to be clicked which then shows new data for this timeline
+				 //startDate, endDate , String("file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] // local copy of file on David's machine
 
 	    	]);
 	    });
@@ -171,8 +171,8 @@ d3.sparql(wikiData, starQuery).then(function(data) {
 		<input type="text" class="searchbox" id="text" />
 		<input type='hidden' id='textID' />
 
-        <!-- <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-		 <input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+         <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
+		<!-- <input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
 		
 		<p>Or click on the items in the timeline below:</p>
 		<div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 85%; width: 100%; "></div>
