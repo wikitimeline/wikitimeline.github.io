@@ -54,3 +54,10 @@
   .searchbar button:hover {
     background: #ccc;
   }
+
+
+  .PositionVideo{
+    display:block;
+    border: 5px solid;
+    border-color: #d43526 #61cb85 #378ac5 #52966a;
+  }
