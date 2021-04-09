@@ -1,93 +1,111 @@
 <html>
-	<head>
-		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/d3-sparql@2.0.0/build/d3-sparql.min.js"></script>
-  		<script src="https://d3js.org/d3.v5.min.js"></script>
-  		<script src="https://d3js.org/d3-collection.v1.min.js"></script>
-  		<script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
-  		<script src="https://d3js.org/d3-request.v1.min.js"></script>
 
-		<script type="text/javascript">
-    
-	var wikiData = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'		// Link to access wiki data SPARQL database
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sparql@2.0.0/build/d3-sparql.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-request.v1.min.js"></script>
+    <script src="https://unpkg.com/timelines-chart"></script>
 
-	const queryString = window.location.search;										// returns: ?subj=...								
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, inital-scale=1.0">
+    <title>WikiTimeline</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="wikidata icon" href="pic/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
-	const urlParams = new URLSearchParams(queryString);
-	const subject = urlParams.get('subj');											// isolates subj eg: https://www.wikidata.org/wiki/Q937
-	
-	var data2;
-
-	google.charts.load('current', {'packages':['timeline']});
-	google.charts.setOnLoadCallback(loadData);
-
-	function loadData(){
-		data2 = new google.visualization.DataTable();
-
-    	//data2.addColumn('string', 'ID');
-		data2.addColumn({ type: 'string', label: 'Predicate', id: 'pName'});
-		data2.addColumn({ type: 'string', label: 'Object', id: 'oName'});
-		data2.addColumn({ type: 'date', label: 'Start Date', id: 'start'});
-		data2.addColumn({ type: 'date', label: 'End Date', id: 'end'});
-		data2.addColumn({ type: 'string', role: 'tooltip', id: 'link', 'p': {'html': true} });
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+       <link rel="stylesheet" href="css/animate.css">
+       <link rel="stylesheet" href="css/bootstrap.min.css">
+       <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+       <link rel="stylesheet" href="css/stylesheet.css">
 
 
-	}
+    <script type="text/javascript">
 
-	// First SPARQL query for non-star triples
-	// retrieves birth/start date & death/end date
-	var datesQuery = `
+        const myChart = TimelinesChart();
+        var wikiData = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql'		// Link to access wiki data SPARQL database
+
+        const queryString = window.location.search;										// returns: ?subj=...								
+
+        const urlParams = new URLSearchParams(queryString);
+        const subject = urlParams.get('subj');											// isolates subj eg: https://www.wikidata.org/wiki/Q937
+
+        var data2;
+         // first query
+        var dataS = []; // second Q
+
+        //google.charts.load('current', {'packages':['timeline']});
+        // google.charts.setOnLoadCallback(loadData);
+
+        // function loadData(){
+        // 	data2 = new google.visualization.DataTable();
+
+        // 	//data2.addColumn('string', 'ID');
+        // 	data2.addColumn({ type: 'string', label: 'Predicate', id: 'pName'});
+        // 	data2.addColumn({ type: 'string', label: 'Object', id: 'oName'});
+        // 	data2.addColumn({ type: 'date', label: 'Start Date', id: 'start'});
+        // 	data2.addColumn({ type: 'date', label: 'End Date', id: 'end'});
+        // 	data2.addColumn({ type: 'string', role: 'tooltip', id: 'link', 'p': {'html': true} });
+
+
+        // }
+
+        // First SPARQL query for non-star triples
+        // retrieves birth/start date & death/end date
+        var datesQuery = `
 		PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 		PREFIX wikibase: <http://wikiba.se/ontology#>
 		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		SELECT ?pred ?obj ?pName WHERE {
-  			<`+subject+`> ?pred ?obj.
+  			<`+ subject + `> ?pred ?obj.
   			FILTER ( (datatype(?obj) = xsd:dateTime) || (datatype(?obj) = xsd:date) || (datatype(?obj) = xsd:gYear) || (datatype(?obj) = xsd:gYearMonth) ).
   			?x wikibase:directClaim ?pred;
     			rdfs:label ?pName.
   			FILTER((LANG(?pName)) = "en")
 		}
 		LIMIT 200
-	`;
+	`;  
+        
+       
+        
+      //  var dataQ = {};
+        												// Assume query has no end/death date, set to current date
+   
+            function getQueryData(){
 
-	var deathDate = new Date();												// Assume query has no end/death date, set to current date
+        d3.sparql(wikiData, datesQuery).then(function (data) {
+            
+            //console.log("We got birth data and death date for QUERY1");
+            //console.log(data);
+            dataQ = data.slice();
+            //console.log(dataQ);
+        
+          // return data;
+        });
 
-d3.sparql(wikiData, datesQuery).then(function(data) {
+         return dataQ;
+    }
 
-	console.log("We got birth data and death date for QUERY1");
-	console.log(data);
+        
+       
+       // var Test = getQueryData();
+       // console.log(Test);
 
+     
+         
+        
 
-	google.charts.load('current', {'packages':['timeline']});
-	google.charts.setOnLoadCallback(loadData2);
-
-
-	function loadData2(){
-
-		data.forEach(function (arrayItem) {
-			var startDate = new Date(arrayItem.obj);
-			var endDate = new Date(startDate.getTime()+1000*60*60*24);
-
-	   		data2.addRows([
-	   			[ String(arrayItem.pName), String(arrayItem.pName),
-	 			   startDate, endDate, String(subject) ]
-	   		]);
-			
-			// Update death date if query has a death date
-			if(arrayItem.pName ==="date of death")									// There is a death/end date
-			{
-				console.log("Has DEATH DATE");
-				deathDate = new Date(arrayItem.obj);
-			}
-		});
-	};
-});
-
-    //Second SPARQLStar query
-	// Finds data between birth/start date & death/end date or present date
-    var starQuery = `
+        //Second SPARQLStar query
+        // Finds data between birth/start date & death/end date or present date
+        var starQuery = `
     	SELECT DISTINCT ?pred ?pName ?obj ?oName ?start ?end WHERE {
-  			<`+subject+`> ?pred ?statement.
+  			<`+ subject + `> ?pred ?statement.
   			?statement ?predPS ?obj;
     			pq:P580 ?start.
   			OPTIONAL { ?statement pq:P582 ?end. FILTER(?end >= ?start).}
@@ -101,122 +119,211 @@ d3.sparql(wikiData, datesQuery).then(function(data) {
   			FILTER((LANG(?oName)) = "en")
 		}
 		LIMIT 200`;
+        
 
-d3.sparql(wikiData, starQuery).then(function(data) {
+        d3.sparql(wikiData, starQuery).then(function (data) {
+            console.log(data);
+            ////////////////////////////
+            //google.charts.load('current', { 'packages': ['timeline'] });
+            // google.charts.setOnLoadCallback(drawChart);
+         
+           
+            
 
-	console.log(data);
-	////////////////////////////
-	google.charts.load('current', {'packages':['timeline']});
-	google.charts.setOnLoadCallback(drawChart);
+            function getRandomData(ordinal = false) {
+                var groups = 1;
+                const NGROUPS = groups;
+                var MAXTIME = data[0].start;
+                var MINTIME = data[0].start;       //assume start date of first entry is earliest date
+                                                                
+                                                                // Need to sort array based on start-date
+                data.forEach(function (arrayItem) {             // find minimum date of query
+                    if(arrayItem.start<MINTIME)
+                    {
+                        MINTIME = arrayItem.start;
+                    }
+                    if(arrayItem.start>MAXTIME)
+                    {
+                        MAXTIME = arrayItem.start;
+                    }
+                });
+
+                const sortedData = data.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
+                data = sortedData;
+
+             return [...Array(NGROUPS).keys()].map(i => ({
+                 group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
+                 data: getGroupData()
+             }));
+
+             // the group is the subject -- Albert Einstein = g1
+             function getGroupData() {                         //called once
+                //console.log(data);
+                 return [...Array(data.length).keys()].map(i => ({
+                     label: data[i].oName,                     //right hand side of graph
+                     data: getSegmentsData(i)
+                 }));
+
+                 //
+                 //ie the bars in the timeline
+                 function getSegmentsData(index)                 //called data.length times
+                 {                      
+                    //console.log("getSegments called");
+                    //const nSegments = data.length,
+                    const   nSegments = 1,                                                          // ????
+                            segMaxLength = Math.round(((new Date()) - MINTIME) / nSegments);        // ????
+                    let runLength = MINTIME;                                                        // earliest date in timeline?
+                    return [...Array(nSegments).keys()].map(i => 
+                    {
+                        start = data[index].start,                              //every entry has a start date
+                        end = data[index].end ? data[index].end : new Date();   //set end date to end date if present otherwise set to current date
+
+                        runLength = new Date(start.getTime() + segMaxLength);                       // ????
+
+                        return {
+                            timeRange: [start, end],        // shows start date to end date on hover
+                            val: data[index].pName,         // shows pName on hover
+                            //labelVal: is optional - only displayed in the labels
+                        };
+                    });
+                 }
+             }
+         }
+         let scale = d3.scaleOrdinal(['#E67B7B', '#FF8F00', '#FFF300', '#6AD96A', '#6A8AD9', '#726AD9', '#C16AD9', '#9D6F6F']);    // red, orange, yellow, green, blue, lilac, purple
+         //console.log("Data pre-sort");
+         //console.log(data);
+
+         
+         TimelinesChart()
+            .rightMargin(200)               // 200 pixels
+		 	.data(getRandomData(true))
+            //.sortChrono([true])             //Places in order of end date if true
+		 	.zQualitative(true)             //???? - https://github.com/vasturiano/timelines-chart for more details
+            .zColorScale(scale)             // Uses scale above to color each oName
+		 	(document.getElementById('chart_div'));
+        //console.log("After sort");
+        //console.log(data);
+        });
+    </script>
+</head>
+
+<body>
+    <header class="site-header site2-header site3-header header-default header-sticky animated">
+        <div class="container-fluid">
+          <div class="site2-header1">
+            <div class="row">
+              <div class="col-md-2 fix-logo">
+                <div class="wrapper-logo">
+                  <a href="index.html" class="logo-default"><img src="pic/logo.png" height="64" alt="AYF"/></a>
+                </div>
+              </div>
+              <div class="col-md-4 col-md-push-6 fix-social">           
+          </div>
+              <div class="col-md-6 col-md-pull-4 fix-menu">
+                <div class="row">
+                  <nav class="main-menu">
+                            <ul class="nav-bar">
+                                <li><a href="index.html">home</a>
+                                </li>
+                                <li><a href="about.html">About</a>
+                                </li>
+                                <li><a href="contributor.html">Contributors</a>
+                                </li>
+                                <li><a href="something_fun.html">Start with Something Fun</a>
+                                </li>
+                            </ul>
+                      </nav>
+                </div>
+                
+              </div>        
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="page-heading">
+        <h1 class="entry-title"></h1>
+
+        <ul class="entry-breadcrumb">
+        </ul>
+    </div>
+      <div id = "Search">
+    <h3>Insert a resource name (e.g. "Albert_Einstein" or "European_Union" etc), select the corresponding query from the
+        drop down list and press "Submit" to start exploring timelines:</h3>
+    <input type="text" class="searchbox" id="text" />
+    <input type='hidden' id='textID' />
+    <!-- enter local host info -->
+    <!--<input type="button" id="btn" value="Submit"    
+       
+        onClick="javascript: window.open('C:/Users/soap1/Documents/GitHub/yagoTimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+    --> 
+    <!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
+    <input type="button" id="btn" value="Submit" onClick="javascript: window.open('https://yagotimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+
+    <p>Or click on the items in the timeline below:</p>
+    <div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 85%; width: 100%;font-size: 11px; "></div>
 
 
-    function drawChart() {
+    <!-- Search wikiData SPARQL database and retrieve corrsepond Qxyz-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet"
+        href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
 
-	    //var today = new Date();
-	    //today = Date.now();
-		if(data.length==0)					//Need to print something to web-page rather than to console
-		{
-			console.log("Invalid query");
-			return;
-		}
-	    data.forEach(function (arrayItem) {
-	    	var startDate = new Date(arrayItem.start);
-			//var endDate = arrayItem.end ? new Date(arrayItem.end) : new Date(startDate.getTime()+1000*60*60*24);
-			var currentDate = deathDate;
-			// if array item has an end date, then stop timeline at this end date specified
-			// otherwise, draw the timeline from start date to present date
-			var endDate = arrayItem.end ? new Date(arrayItem.end) : new Date(currentDate.getTime());
-	    	data2.addRows([
-	    		[ String(arrayItem.pName), String(arrayItem.oName),
-                 startDate, endDate , String("https://yagotimeline.github.io/search.html?subj=" +arrayItem.obj) ]	// Allows new timelines to be clicked which then shows new data for this timeline
-				 //startDate, endDate , String("file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj="+arrayItem.obj) ] // local copy of file on David's machine
+    <script type="text/javascript">
+        $(".searchbox").autocomplete({
+            source: function (request, response) {
+                console.log(request.term);
+                $.ajax({
+                    url: "https://www.wikidata.org/w/api.php",
+                    dataType: "jsonp",
+                    data: {
+                        'action': "wbsearchentities",
+                        'format': "json",
+                        'language': "en",
+                        'search': request.term
+                    },
+                    success: function (data) {
+                        //response(data.search);
+                        response($.map(data.search, function (item) {
+                            return {
+                                label: item.label + " (" + item.description + ")",
+                                value: item.label,
+                                id: item.id,
+                                description: item.description
+                            }
+                        }));
+                    }
+                });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+                console.log("Selected: " + ui.item.label + ", having the Wikidata entity: " + ui.item.id);
+                $("#text").val(ui.item.value);
+                $("#textID").val(ui.item.id); return false;
+            }
+        });
+    </script>
 
-	    	]);
-	    });
+<script src="assets/js/Nav.js"></script>
+<script src="assets/js/Search.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-sparql@2.0.0/build/d3-sparql.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-collection.v1.min.js"></script>
+<script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+<script src="https://d3js.org/d3-request.v1.min.js"></script>
 
-		// sort startDate column
-		// Ensures data is displayed in chronological order
-		// May already come in chronological order, need to investigate 
-    	data2.sort({
-      		column: 2,
-      		desc: false
-    	});
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+    crossorigin="anonymous"></script>
 
-		// Options for google charts visualisation
-	    var options = {
-			timeline: { groupByRowLabel: false },		//Prevents timelines being drawn on same line			
-			backgroundColor: '#ffd'						//Sets background color of chart
+    <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
 
-		};
+<!-- Added by Tanmay  -->
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/lightgallery.min.js"></script>
+<script type="text/javascript" src="assets/js/parallax.min.js"></script>
+<script type="text/javascript" src="assets/js/main.js"></script>
+</body>
 
-		var chart = new google.visualization.Timeline(document.getElementById('chart_div'));
-
-		google.visualization.events.addListener(chart, 'select', function () {
-    		var selection = chart.getSelection();
-    		if (selection.length > 0) {
-      			window.open(data2.getValue(selection[0].row, 4), '_self'); //to open in a new tab use -> '_blank');
-      			console.log(data2.getValue(selection[0].row, 4));
-    		}
-  		});
-
-	    chart.draw(data2, options);
-
-	};
-});
-
-		</script>
-	</head>
-	<body>
-		<h3>Insert a resource name (e.g. "Albert_Einstein" or "European_Union" etc), select the corresponding query from the drop down list and press "Submit" to start exploring timelines:</h3>
-		<input type="text" class="searchbox" id="text" />
-		<input type='hidden' id='textID' />
-
-         <input type="button" id="btn" value="Submit" onClick="javascript: window.open('http://yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-		<!-- <input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-		
-		<p>Or click on the items in the timeline below:</p>
-		<div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 85%; width: 100%; "></div>
-		
-
-		<!-- Search wikiData SPARQL database and retrieve corrsepond Qxyz-->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
-		
-		<script type="text/javascript">
-		$(".searchbox").autocomplete({
-		    source: function(request, response) {
-		        console.log(request.term);
-		        $.ajax({
-		            url: "https://www.wikidata.org/w/api.php",
-		            dataType: "jsonp",
-		            data: {
-		                'action': "wbsearchentities",
-		                'format': "json",
-				'language': "en",
-		                'search': request.term
-		            },
-		            success: function(data) {
-		                //response(data.search);
-				response( $.map(data.search, function(item) {
-					return {
-						label: item.label + " (" + item.description + ")",
-						value: item.label,
-						id: item.id,
-						description: item.description
-					}
-				}));
-		            }
-		        });
-		    },
-		    minLength: 3,
-		    select: function( event, ui ) {
-				console.log( "Selected: " + ui.item.label + ", having the Wikidata entity: " + ui.item.id );
-				$("#text").val(ui.item.value);
-				$("#textID").val(ui.item.id); return false;
-		    }
-		});
-		</script>
-	</body>
-</html> 
-
+</html>
