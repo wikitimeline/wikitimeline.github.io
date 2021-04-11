@@ -61,3 +61,46 @@
     border: 5px solid;
     border-color: #d43526 #61cb85 #378ac5 #52966a;
   }
+
+
+  .profile-container{
+    flex-flow: row wrap;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+  }
+
+  .profile{
+    flex-basis: 30%;
+    padding: 3rem;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    display: block;
+    text-align: center;
+    background-color: rgb(243, 242, 242);
+    margin: 5px;
+    border-radius: 5%;
+    min-height: 300px;
+    min-width: 200px;
+
+  }
+
+  .img{
+    border-radius: 0;
+    transition: 500ms;
+    border-radius: 5%;
+    display: inline-block;
+    overflow: hidden;
+  }
+
+  .img:hover{
+    opacity: 80%;
+    transform: scale(1.1);
+  }
+
+  .profile-name{
+    color: #000830;
+    font-weight: bold;
+  }
