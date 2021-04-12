@@ -93,6 +93,8 @@
     border-radius: 5%;
     display: inline-block;
     overflow: hidden;
+    /* height: 200px;
+    width: 200px; */
   }
 
   .img:hover{
@@ -103,4 +105,30 @@
   .profile-name{
     color: #000830;
     font-weight: bold;
+  }
+  
+  .fun{
+    flex-basis: 40%;
+    padding: 2rem;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    display: block;
+    text-align: center;
+  }
+  .fun-img{
+    border-radius: 0;
+    transition: 500ms;
+    border-radius: 5%;
+    display: inline-block;
+    overflow: hidden;
+    height: 300px;
+    width: 300px;
+  }
+
+  .fun-img:hover{
+    opacity: 80%;
+    transform: scale(1.1);
+    border: 1px solid rgb(14, 13, 13);
+   
   }
