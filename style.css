@@ -34,6 +34,8 @@
   }
   .searchbar {
     float: center;
+    width: auto;
+    height: auto;
   }
 
   .searchbar input[type=text] {
