@@ -92,7 +92,12 @@
          return dataQ;
     }
 
-        
+    function addMonth(date, month) 
+    {
+        var result = new Date(date);
+        result.setMonth(result.getMonth() + month);
+        return result;
+    }
        
        // var Test = getQueryData();
        // console.log(Test);
@@ -125,8 +130,8 @@
             birthData.forEach(function (arrayItem) {            // Edit birthData to have start & end date with oName
                 if (typeof arrayItem === "object" ){
                     arrayItem["start"] = arrayItem.obj;         //start is obj date
-                     arrayItem["end"] = new Date(arrayItem.obj.getYear(), arrayItem.obj.getMonth()+1, arrayItem.obj.getDate()); //end date is obj date + 1 month
-                     arrayItem["oName"] = arrayItem.pName;      //oName is pName
+                    arrayItem["end"] = addMonth(arrayItem.obj,1);     // add extra month to end date if not specified to make it visible on chart 
+                    arrayItem["oName"] = arrayItem.pName;      //oName is pName
                 }
             });
         
@@ -180,6 +185,7 @@
                     //const nSegments = data.length,
                     const   nSegments = 1,                                                          // ????
                             segMaxLength = Math.round(((new Date()) - MINTIME) / nSegments);        // ????
+                    console.log(segMaxLength);
                     let runLength = MINTIME;                                                        // earliest date in timeline?
                     return [...Array(nSegments).keys()].map(i => 
                     {
@@ -191,6 +197,7 @@
                         return {
                             timeRange: [start, end],        // shows start date to end date on hover
                             val: data[index].pName,         // shows pName on hover
+                            duartion: data[index].start + " - " + data[index].end
                             //labelVal: is optional - only displayed in the labels
                         };
                     });
@@ -264,8 +271,8 @@
        
         onClick="javascript: window.open('C:/Users/soap1/Documents/GitHub/yagoTimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
     --> 
-    <!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-    <input type="button" id="btn" value="Submit" onClick="javascript: window.open('https://yagotimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+    <input type="button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/yagoTimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+    <!--<input type="button" id="btn" value="Submit" onClick="javascript: window.open('https://yagotimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
     </div>
     <div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 85%; width: 100%;font-size: 11px; "></div>
 
