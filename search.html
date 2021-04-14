@@ -160,7 +160,7 @@
                         MAXTIME = arrayItem.start;
                     }
                 });
-
+                
                 const sortedData = data.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
                 data = sortedData;
 
@@ -208,6 +208,17 @@
          //console.log("Data pre-sort");
          //console.log(data);
 
+         //Tried to call from the drawing of timeline but doesnt wait for click when it runs
+        // function onSegmentClick(obj){
+        //     if(onSegmentClick(obj)){
+        //         console.log("clicked")
+        //     }
+        //     state.onSegmentClick(s);
+         //var queryCode = obj.split("http://www.wikidata.org/entity/");   //queryCode will have the Q Code stored in it
+        // console.log(queryCode);
+   // }
+        
+
          
          TimelinesChart()
             .rightMargin(200)               // 200 pixels
@@ -215,6 +226,7 @@
             .maxLineHeight(17)
             .topMargin(40)
 		 	.data(getRandomData(true))
+           // .onSegmentClick(onSegmentClick(data.obj))
             //.sortChrono([true])             //Places in order of end date if true
 		 	.zQualitative(true)             //???? - https://github.com/vasturiano/timelines-chart for more details
             .zColorScale(scale)             // Uses scale above to color each oName
