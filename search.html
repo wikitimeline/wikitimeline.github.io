@@ -19,11 +19,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
-        <link rel="stylesheet" href="css/font-awesome.min.css">
-       <link rel="stylesheet" href="css/animate.css">
-       <link rel="stylesheet" href="css/bootstrap.min.css">
-       <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-       <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link rel="stylesheet" href="css/stylesheet.css">
 
 
     <script type="text/javascript">
@@ -36,61 +36,39 @@
         const urlParams = new URLSearchParams(queryString);
         const subject = urlParams.get('subj');											// isolates subj eg: https://www.wikidata.org/wiki/Q937
 
-        var data2;
-         // first query
-        var dataS = []; // second Q
-
-        //google.charts.load('current', {'packages':['timeline']});
-        // google.charts.setOnLoadCallback(loadData);
-
-        // function loadData(){
-        // 	data2 = new google.visualization.DataTable();
-
-        // 	//data2.addColumn('string', 'ID');
-        // 	data2.addColumn({ type: 'string', label: 'Predicate', id: 'pName'});
-        // 	data2.addColumn({ type: 'string', label: 'Object', id: 'oName'});
-        // 	data2.addColumn({ type: 'date', label: 'Start Date', id: 'start'});
-        // 	data2.addColumn({ type: 'date', label: 'End Date', id: 'end'});
-        // 	data2.addColumn({ type: 'string', role: 'tooltip', id: 'link', 'p': {'html': true} });
-
-
-        // }
-
         // First SPARQL query for non-star triples
         // retrieves birth/start date & death/end date
         var datesQuery = `
-		PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-		PREFIX wikibase: <http://wikiba.se/ontology#>
-		PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-		SELECT ?pred ?obj ?pName WHERE {
-  			<`+ subject + `> ?pred ?obj.
-  			FILTER ( (datatype(?obj) = xsd:dateTime) || (datatype(?obj) = xsd:date) || (datatype(?obj) = xsd:gYear) || (datatype(?obj) = xsd:gYearMonth) ).
-  			?x wikibase:directClaim ?pred;
-    			rdfs:label ?pName.
-  			FILTER((LANG(?pName)) = "en")
-		}
-		LIMIT 200
-	`;  
-        
-       
-        
-      //  var dataQ = {};
-        												// Assume query has no end/death date, set to current date
-   
-            function getQueryData(){
+		    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+		    PREFIX wikibase: <http://wikiba.se/ontology#>
+		    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		    SELECT ?pred ?obj ?pName WHERE {
+  		    	<`+ subject + `> ?pred ?obj.
+  		    	FILTER ( (datatype(?obj) = xsd:dateTime) || (datatype(?obj) = xsd:date) || (datatype(?obj) = xsd:gYear) || (datatype(?obj) = xsd:gYearMonth) ).
+  		    	?x wikibase:directClaim ?pred;
+    	    		rdfs:label ?pName.
+  		    	FILTER((LANG(?pName)) = "en")
+		    }
+		    LIMIT 200`;  
 
-        d3.sparql(wikiData, datesQuery).then(function (data) {
-            
-            //console.log("We got birth data and death date for QUERY1");
-            //console.log(data);
-            dataQ = data.slice();
-            //console.log(dataQ);
-        
-          // return data;
-        });
-
-         return dataQ;
-    }
+        //Second SPARQLStar query
+        // Finds data between birth/start date & death/end date or present date
+        var starQuery = `
+    	    SELECT DISTINCT ?pred ?pName ?obj ?oName ?start ?end WHERE {
+  		    	<`+ subject + `> ?pred ?statement.
+  		    	?statement ?predPS ?obj;
+    	    		pq:P580 ?start.
+  		    	OPTIONAL { ?statement pq:P582 ?end. FILTER(?end >= ?start).}
+  		    	FILTER(STRSTARTS(STR(?predPS), "http://www.wikidata.org/prop/statement/"))
+  		    	FILTER(STRSTARTS(STR(?pred), "http://www.wikidata.org/prop/"))
+  		    	FILTER(STRSTARTS(STR(?statement), "http://www.wikidata.org/entity/statement/"))
+  		    	?x wikibase:claim ?pred;
+    	    		rdfs:label ?pName.
+  		    	FILTER((LANG(?pName)) = "en")
+  		    	?obj rdfs:label ?oName.
+  		    	FILTER((LANG(?oName)) = "en")
+		    }
+		    LIMIT 200`;
 
     function addMonth(date, month) 
     {
@@ -98,44 +76,18 @@
         result.setMonth(result.getMonth() + month);
         return result;
     }
-       
-       // var Test = getQueryData();
-       // console.log(Test);
 
-     
-         
-        
-
-        //Second SPARQLStar query
-        // Finds data between birth/start date & death/end date or present date
-        var starQuery = `
-    	SELECT DISTINCT ?pred ?pName ?obj ?oName ?start ?end WHERE {
-  			<`+ subject + `> ?pred ?statement.
-  			?statement ?predPS ?obj;
-    			pq:P580 ?start.
-  			OPTIONAL { ?statement pq:P582 ?end. FILTER(?end >= ?start).}
-  			FILTER(STRSTARTS(STR(?predPS), "http://www.wikidata.org/prop/statement/"))
-  			FILTER(STRSTARTS(STR(?pred), "http://www.wikidata.org/prop/"))
-  			FILTER(STRSTARTS(STR(?statement), "http://www.wikidata.org/entity/statement/"))
-  			?x wikibase:claim ?pred;
-    			rdfs:label ?pName.
-  			FILTER((LANG(?pName)) = "en")
-  			?obj rdfs:label ?oName.
-  			FILTER((LANG(?oName)) = "en")
-		}
-		LIMIT 200`;
-        
-        d3.sparql(wikiData, datesQuery).then(function (birthData) {
+    d3.sparql(wikiData, datesQuery).then(function (birthData) {
             
-            birthData.forEach(function (arrayItem) {            // Edit birthData to have start & end date with oName
-                if (typeof arrayItem === "object" ){
-                    arrayItem["start"] = arrayItem.obj;         //start is obj date
-                    arrayItem["end"] = addMonth(arrayItem.obj,1);     // add extra month to end date if not specified to make it visible on chart 
-                    arrayItem["oName"] = arrayItem.pName;      //oName is pName
-                }
-            });
+        birthData.forEach(function (arrayItem) {            // Edit birthData to have start & end date with oName
+            if (typeof arrayItem === "object" ){
+                arrayItem["start"] = arrayItem.obj;         //start is obj date
+                arrayItem["end"] = addMonth(arrayItem.obj,1);     // add extra month to end date if not specified to make it visible on chart 
+                arrayItem["oName"] = arrayItem.pName;      //oName is pName
+            }
+        });
         
-            d3.sparql(wikiData, starQuery).then(function (starData) {
+        d3.sparql(wikiData, starQuery).then(function (starData) {
             
             var data = birthData.concat(starData);             // join birth and star data together
             console.log(data);
@@ -164,18 +116,18 @@
                 const sortedData = data.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
                 data = sortedData;
 
-             return [...Array(NGROUPS).keys()].map(i => ({
-                 group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
-                 data: getGroupData()
-             }));
+                return [...Array(NGROUPS).keys()].map(i => ({
+                    group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
+                    data: getGroupData()
+                }));
 
              // the group is the subject -- Albert Einstein = g1
-             function getGroupData() {                         //called once
-                //console.log(data);
-                return [...Array(data.length).keys()].map(i => ({
-                    label: data[i].oName,                     //right hand side of graph
-                    data: getSegmentsData(i)
-                }));
+                function getGroupData() {                         //called once
+                    //console.log(data);
+                    return [...Array(data.length).keys()].map(i => ({
+                        label: data[i].oName,                     //right hand side of graph
+                        data: getSegmentsData(i)
+                    }));
 
                  //
                  //ie the bars in the timeline
@@ -204,26 +156,23 @@
                 }
              }
         }
-         let scale = d3.scaleOrdinal(['#E67B7B', '#FF8F00', '#FFF300', '#6AD96A', '#6A8AD9', '#726AD9', '#C16AD9', '#9D6F6F']);    // red, orange, yellow, green, blue, lilac, purple
-         //console.log("Data pre-sort");
-         //console.log(data);
+        let scale = d3.scaleOrdinal(['#E67B7B', '#FF8F00', '#FFF300', '#6AD96A', '#6A8AD9', '#726AD9', '#C16AD9', '#9D6F6F']);    // red, orange, yellow, green, blue, lilac, purple
 
-         //Tried to call from the drawing of timeline but doesnt wait for click when it runs
-         function segmentClick(segment)
-         {
-            console.log(segment.target.__data__.label);
-            var segmentName = segment.target.__data__.label;
-            var queryCode;
-            for(i=0;i<data.length;i++)
-            {
-                if(data[i].oName == segmentName)
-                {
-                    queryCode = data[i].obj;
-                    break;
-                }
-            }
-            console.log(queryCode);
-            window.open('https://wikitimeline.github.io/search.html?subj='+queryCode, '_self');
+        function segmentClick(segment)
+        {
+           console.log(segment.target.__data__.label);
+           var segmentName = segment.target.__data__.label;
+           var queryCode;
+           for(i=0;i<data.length;i++)
+           {
+               if(data[i].oName == segmentName)
+               {
+                   queryCode = data[i].obj;
+                   break;
+               }
+           }
+           console.log(queryCode);
+           window.open('https://wikitimeline.github.io/search.html?subj='+queryCode, '_self');
         }
         
 
@@ -240,10 +189,8 @@
             .zColorScale(scale)             // Uses scale above to color each oName
             .zScaleLabel('Consumo')
 		 	(document.getElementById('chart_div'));
-        //console.log("After sort");
-        //console.log(data);
-        });
-    });
+        }); //end of starQuery
+    }); //end of birthQuery
     </script>
 </head>
 
@@ -299,7 +246,8 @@
         onClick="javascript: window.open('C:/Users/soap1/Documents/GitHub/wikitimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
     --> 
     <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('C:/Users/daith/OneDrive/Documents/Software Engineering Project/sweng project/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-    <input type="button" id="btn" value="Submit" onClick="javascript: window.open('https://wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+    <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+    <!-- <input type="button" id="btn" value="Submit" onClick="javascript: window.open('https://wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
     </div>
     <br> </br>
     <div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 100%; width: 100%;font-size: 11px; "></div>
