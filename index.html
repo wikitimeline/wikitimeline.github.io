@@ -92,9 +92,14 @@
             <input type="text" class='searchbox' placeholder="Enter a query..." style="width: 60%; height: 35px "
               id="text" />
             <input type='hidden' id="textID" />
-            <button type="button" id="btn"
+            <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('http://wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+
+              <!-- <i></i></button> -->
+              <!-- onClick="javascript: window.open('http://wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');"> -->
+              <!-- <button type="button" id="btn"
               onClick="javascript: window.open('http://wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');"><i
                 class="fa fa-search" ></i></button>
+           -->
           </div>
 
           <!-- Search wikiData SPARQL database and retrieve corrsepond Qxyz-->

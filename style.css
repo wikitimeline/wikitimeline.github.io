@@ -33,9 +33,9 @@
 
   }
   .searchbar {
+    float: center;
     width: auto;
     height: auto;
-    float: center;
   }
 
   .searchbar input[type=text] {
@@ -46,7 +46,7 @@
   }
 
   .searchbar-button {
-    height: auto;
+    height: 36px;
     width: auto;
     padding: 6px 10px;
     background: #ddd;
