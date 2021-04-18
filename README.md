@@ -1,6 +1,6 @@
 # WikiTimeline
 
-![logo](/pic/logo.png)
+![logo](/pic/timelinelogo.jpeg)
 
 ## Introduction
 
