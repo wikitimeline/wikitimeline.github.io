@@ -61,6 +61,17 @@
     background: #ccc;
   }
 
+  .Compare-button {
+    height: auto;
+    width: auto;
+    padding: 6px 10px;
+    background: #ddd;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+    border-radius: 10%;
+    border: 1px solid rgb(14, 13, 13); 
+  }
 
   .PositionVideo{
     display:block;
