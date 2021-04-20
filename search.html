@@ -36,6 +36,10 @@
         const urlParams = new URLSearchParams(queryString);
         const subject = urlParams.get('subj');											// isolates subj eg: https://www.wikidata.org/wiki/Q937
 
+        const subject2 = urlParams.get('subj2');
+        console.log("This is subject2");
+        console.log(subject2);
+
         // First SPARQL query for non-star triples
         // retrieves birth/start date & death/end date
         var datesQuery = `
@@ -49,7 +53,20 @@
     	    		rdfs:label ?pName.
   		    	FILTER((LANG(?pName)) = "en")
 		    }
-		    LIMIT 200`;  
+		    LIMIT 200`;
+            
+        var datesQuery2 = `
+		    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+		    PREFIX wikibase: <http://wikiba.se/ontology#>
+		    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+		    SELECT ?pred ?obj ?pName WHERE {
+  		    	<`+ subject2 + `> ?pred ?obj.
+  		    	FILTER ( (datatype(?obj) = xsd:dateTime) || (datatype(?obj) = xsd:date) || (datatype(?obj) = xsd:gYear) || (datatype(?obj) = xsd:gYearMonth) ).
+  		    	?x wikibase:directClaim ?pred;
+    	    		rdfs:label ?pName.
+  		    	FILTER((LANG(?pName)) = "en")
+		    }
+		    LIMIT 200`; 
 
         //Second SPARQLStar query
         // Finds data between birth/start date & death/end date or present date
@@ -70,12 +87,37 @@
 		    }
 		    LIMIT 200`;
 
+        var starQuery2 = `
+    	    SELECT DISTINCT ?pred ?pName ?obj ?oName ?start ?end WHERE {
+  		    	<`+ subject2 + `> ?pred ?statement.
+  		    	?statement ?predPS ?obj;
+    	    		pq:P580 ?start.
+  		    	OPTIONAL { ?statement pq:P582 ?end. FILTER(?end >= ?start).}
+  		    	FILTER(STRSTARTS(STR(?predPS), "http://www.wikidata.org/prop/statement/"))
+  		    	FILTER(STRSTARTS(STR(?pred), "http://www.wikidata.org/prop/"))
+  		    	FILTER(STRSTARTS(STR(?statement), "http://www.wikidata.org/entity/statement/"))
+  		    	?x wikibase:claim ?pred;
+    	    		rdfs:label ?pName.
+  		    	FILTER((LANG(?pName)) = "en")
+  		    	?obj rdfs:label ?oName.
+  		    	FILTER((LANG(?oName)) = "en")
+		    }
+		    LIMIT 200`;
+
     function addMonth(date, month) 
     {
         var result = new Date(date);
         result.setMonth(result.getMonth() + month);
         return result;
     }
+    
+    /* 
+
+    d3.sparql(wikiData, starQuery2).then(function (starData2) {
+
+        console.log("We got star2 data.");
+        console.log(starData2); 
+    });*/
 
     d3.sparql(wikiData, datesQuery).then(function (birthData) {
             
@@ -84,19 +126,53 @@
                 arrayItem["start"] = arrayItem.obj;         //start is obj date
                 arrayItem["end"] = addMonth(arrayItem.obj,1);     // add extra month to end date if not specified to make it visible on chart 
                 arrayItem["oName"] = arrayItem.pName;      //oName is pName
+                arrayItem['group'] = 1;
             }
-        });
+        }); // end of birthData.forEach
         
         d3.sparql(wikiData, starQuery).then(function (starData) {
+
+            starData.forEach(function (arrayItem) { 
+                if (typeof arrayItem === "object"){
+                    arrayItem['group'] = 1;
+                }
+            });
             
-            var data = birthData.concat(starData);             // join birth and star data together
-            console.log(data);
-         
-           
+            var data1 = birthData.concat(starData);             // join birth and star data together   
             
+            data1 = data1.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
+            //data1 = sortedData;
+
+            d3.sparql(wikiData, datesQuery2).then(function (birthData2) { 
+
+                birthData2.forEach(function (arrayItem) {            // Edit birthData to have start & end date with oName
+                    if (typeof arrayItem === "object" ){
+                        arrayItem["start"] = arrayItem.obj;         //start is obj date
+                        arrayItem["end"] = addMonth(arrayItem.obj,1);     // add extra month to end date if not specified to make it visible on chart 
+                        arrayItem["oName"] = arrayItem.pName;      //oName is pName
+                        arrayItem['group'] = 2;
+                    }
+                });
+
+                d3.sparql(wikiData, starQuery2).then(function (starData2) { 
+                    starData2.forEach(function (arrayItem) { 
+                        if (typeof arrayItem === "object"){
+                            arrayItem['group'] = 2;
+                        }
+                    });
+
+                    var data2 = birthData2.concat(starData2);
+
+                    data2 = data2.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
+
+                    //console.log("This is data with 2 queries");
+                    var data = data1.concat(data2);
+                    console.log(data);
+
 
             function getRandomData(ordinal = false) {
-                var groups = 1;
+                
+                var groups = 2;
                 const NGROUPS = groups;
                 var MAXTIME = data[0].start;
                 var MINTIME = data[0].start;       //assume start date of first entry is earliest date
@@ -113,16 +189,17 @@
                     }
                 });
                 
-                const sortedData = data.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
-                data = sortedData;
+                //const sortedData = data.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
+                //data = sortedData;
 
                 return [...Array(NGROUPS).keys()].map(i => ({
-                    group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
-                    data: getGroupData()
+                    //group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
+                    group: 'group' + (i+1),
+                    data: i==0 ? getGroupData(data1) : getGroupData(data2)
                 }));
 
              // the group is the subject -- Albert Einstein = g1
-                function getGroupData() {                         //called once
+                function getGroupData(data) {                         //called once
                     //console.log(data);
                     return [...Array(data.length).keys()].map(i => ({
                         label: data[i].oName,                     //right hand side of graph
@@ -134,10 +211,10 @@
                 function getSegmentsData(index)                 //called data.length times
                 {                      
                     //console.log("getSegments called");
-                    //const nSegments = data.length,
-                    const   nSegments = 1,                                                          // ????
+                    const nSegments = data.length,
+                    //const   nSegments = 1,                                                          // ????
                             segMaxLength = Math.round(((new Date()) - MINTIME) / nSegments);        // ????
-                    console.log(segMaxLength);
+                    //console.log(segMaxLength);
                     let runLength = MINTIME;                                                        // earliest date in timeline?
                     return [...Array(nSegments).keys()].map(i => 
                     {
@@ -181,14 +258,17 @@
             .rightMargin(200)               // 200 pixels
             .maxHeight(1920)
             .maxLineHeight(17)
+            //.maxLineHeight(10)
             .topMargin(40)
 		 	.data(getRandomData(true))
             .onSegmentClick(segmentClick)
             //.sortChrono([true])             //Places in order of end date if true
-		 	.zQualitative(true)             //???? - https://github.com/vasturiano/timelines-chart for more details
+		 	.zQualitative(true)             // length of scale - https://github.com/vasturiano/timelines-chart for more details
             .zColorScale(scale)             // Uses scale above to color each oName
-            .zScaleLabel('Consumo')
+            //.zScaleLabel('Consumo')
 		 	(document.getElementById('chart_div'));
+        }); // end of starQuery2
+        }); // end of birthQuery2
         }); //end of starQuery
     }); //end of birthQuery
     </script>
@@ -240,14 +320,18 @@
     <div id = "Search" class="searchbar">
     <input type="text" class="searchbox" placeholder="Enter a query..." id="text" style="width: 60%; height: 35px "/>
     <input type='hidden' id='textID' />
+    <br> </br>
+    <div id = "Search2" class="searchbar2">
+    <input type="text" class="searchbox2" placeholder="Enter a query2..." id="text2" style="width: 60%; height: 35px "/>
+    <input type='hidden' id='textID2' />
     <!-- enter local host info -->
     <!--<input type="button" id="btn" value="Submit"    
        
         onClick="javascript: window.open('C:/Users/soap1/Documents/GitHub/wikitimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
     --> 
     <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('C:/Users/daith/OneDrive/Documents/Software Engineering Project/sweng project/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-    <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-    <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('https://wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+    <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value + '&subj2=http://www.wikidata.org/entity/'+ document.getElementById('textID2').value, '_self');" />
+    <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('https://wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
     </div>
     <br> </br>
     <div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 100%; width: 100%;font-size: 11px; "></div>
@@ -293,6 +377,41 @@
             }
         });
     </script>
+
+<script type="text/javascript">
+    $(".searchbox2").autocomplete({
+        source: function (request, response) {
+            console.log(request.term);
+            $.ajax({
+                url: "https://www.wikidata.org/w/api.php",
+                dataType: "jsonp",
+                data: {
+                    'action': "wbsearchentities",
+                    'format': "json",
+                    'language': "en",
+                    'search': request.term
+                },
+                success: function (data) {
+                    //response(data.search);
+                    response($.map(data.search, function (item) {
+                        return {
+                            label: item.label + " (" + item.description + ")",
+                            value: item.label,
+                            id: item.id,
+                            description: item.description
+                        }
+                    }));
+                }
+            });
+        },
+        minLength: 3,
+        select: function (event, ui) {
+            console.log("Selected: " + ui.item.label + ", having the Wikidata entity: " + ui.item.id);
+            $("#text2").val(ui.item.value);
+            $("#textID2").val(ui.item.id); return false;
+        }
+    });
+</script>
 
 <script src="assets/js/Nav.js"></script>
 <script src="assets/js/Search.js"></script>
