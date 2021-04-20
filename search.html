@@ -42,8 +42,42 @@
 
         // First SPARQL query for non-star triples
         // retrieves birth/start date & death/end date
+        var basicInfoQuery = `
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                PREFIX wikibase: <http://wikiba.se/ontology#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?pred ?obj ?pName ?subjLabel ?subjDescription WHERE {
+                   BIND(<`+ subject + `>  AS ?subj)
+                   ?subj ?pred ?obj.
+                   FILTER((((((DATATYPE(?obj)) = xsd:dateTime) || ((DATATYPE(?obj)) =
+                xsd:date)) || ((DATATYPE(?obj)) = xsd:gYear)) || ((DATATYPE(?obj)) =
+                xsd:gYearMonth)) || (?pred = wdt:P18))
+                   ?x wikibase:directClaim ?pred;
+                     rdfs:label ?pName.
+                   FILTER((LANG(?pName)) = "en")
+                   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+                }
+                LIMIT 200`;
+
+        var basicInfoQuery2 = `
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                PREFIX wikibase: <http://wikiba.se/ontology#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?pred ?obj ?pName ?subjLabel ?subjDescription WHERE {
+                   BIND(<`+ subject2 + `>  AS ?subj)
+                   ?subj ?pred ?obj.
+                   FILTER((((((DATATYPE(?obj)) = xsd:dateTime) || ((DATATYPE(?obj)) =
+                xsd:date)) || ((DATATYPE(?obj)) = xsd:gYear)) || ((DATATYPE(?obj)) =
+                xsd:gYearMonth)) || (?pred = wdt:P18))
+                   ?x wikibase:directClaim ?pred;
+                     rdfs:label ?pName.
+                   FILTER((LANG(?pName)) = "en")
+                   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+                }
+                LIMIT 200`;
+
         var datesQuery = `
-		    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 		    PREFIX wikibase: <http://wikiba.se/ontology#>
 		    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		    SELECT ?pred ?obj ?pName WHERE {
@@ -56,7 +90,7 @@
 		    LIMIT 200`;
             
         var datesQuery2 = `
-		    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 		    PREFIX wikibase: <http://wikiba.se/ontology#>
 		    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 		    SELECT ?pred ?obj ?pName WHERE {
@@ -119,10 +153,38 @@
         console.log(starData2); 
     });*/
 
+    var queryName1;
+    var queryName2;
+
     d3.sparql(wikiData, datesQuery).then(function (birthData) {
+
+        console.log("This is birthData");
+        console.log(birthData);
+        d3.sparql(wikiData, basicInfoQuery).then(function (basicInfo){
+            console.log(basicInfo);
+            basicInfo.forEach(function (arrayItem) {
+                if(typeof arrayItem.subjLabel != Date)
+                {
+                    queryName1 = arrayItem.subjLabel
+                }
+            })
+            console.log(queryName1);
+        
+
+        d3.sparql(wikiData, basicInfoQuery2).then(function (basicInfo2){
+            console.log(basicInfo);
+            basicInfo2.forEach(function (arrayItem) {
+                if(typeof arrayItem.subjLabel != Date)
+                {
+                    queryName2 = arrayItem.subjLabel
+                }
+            })
+        
+        console.log(queryName2);
             
         birthData.forEach(function (arrayItem) {            // Edit birthData to have start & end date with oName
-            if (typeof arrayItem === "object" ){
+            if (typeof arrayItem === "object")
+            {
                 arrayItem["start"] = arrayItem.obj;         //start is obj date
                 arrayItem["end"] = addMonth(arrayItem.obj,1);     // add extra month to end date if not specified to make it visible on chart 
                 arrayItem["oName"] = arrayItem.pName;      //oName is pName
@@ -141,7 +203,6 @@
             var data1 = birthData.concat(starData);             // join birth and star data together   
             
             data1 = data1.sort((a,b) => Date.parse(a.start) - Date.parse(b.start))
-            //data1 = sortedData;
 
             d3.sparql(wikiData, datesQuery2).then(function (birthData2) { 
 
@@ -193,8 +254,8 @@
                 //data = sortedData;
 
                 return [...Array(NGROUPS).keys()].map(i => ({
-                    //group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
-                    group: 'group' + (i+1),
+                    group: i==0 ? queryName1 : queryName2,                          //left hand side of grid, need to make query name, currently set as data[0].oName
+                    //group: 'group' + (i+1),
                     data: i==0 ? getGroupData(data1) : getGroupData(data2)
                 }));
 
@@ -256,9 +317,9 @@
          
          TimelinesChart()
             .rightMargin(200)               // 200 pixels
+            .leftMargin(200)
             .maxHeight(1920)
             .maxLineHeight(17)
-            //.maxLineHeight(10)
             .topMargin(40)
 		 	.data(getRandomData(true))
             .onSegmentClick(segmentClick)
@@ -270,6 +331,8 @@
         }); // end of starQuery2
         }); // end of birthQuery2
         }); //end of starQuery
+    }); // end of basicInfo2
+    }); //end of basicInfo
     }); //end of birthQuery
     </script>
 </head>
