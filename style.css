@@ -72,6 +72,9 @@
     border-radius: 10%;
     border: 1px solid rgb(14, 13, 13); 
   }
+  .Compare-button:hover {
+    background: #ccc;
+  }
 
   .PositionVideo{
     display:block;
