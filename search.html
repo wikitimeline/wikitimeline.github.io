@@ -72,12 +72,30 @@
 		    }
 		    LIMIT 200`;
 
+        var basicQuery = `
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                PREFIX wikibase: <http://wikiba.se/ontology#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?pred ?obj ?pName ?subjLabel ?subjDescription WHERE {
+                   BIND(<`+ subject + `>  AS ?subj)
+                   ?subj ?pred ?obj.
+                   FILTER((((((DATATYPE(?obj)) = xsd:dateTime) || ((DATATYPE(?obj)) =
+                xsd:date)) || ((DATATYPE(?obj)) = xsd:gYear)) || ((DATATYPE(?obj)) =
+                xsd:gYearMonth)) || (?pred = wdt:P18))
+                   ?x wikibase:directClaim ?pred;
+                     rdfs:label ?pName.
+                   FILTER((LANG(?pName)) = "en")
+                   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+            }
+            LIMIT 200`;
+
         function addMonth(date, month) {
             var result = new Date(date);
             result.setMonth(result.getMonth() + month);
             return result;
         }
 
+        var queryName;
         d3.sparql(wikiData, datesQuery).then(function (birthData) {
 
             birthData.forEach(function (arrayItem) {            // Edit birthData to have start & end date with oName
@@ -93,8 +111,16 @@
                 var data = birthData.concat(starData);             // join birth and star data together
                 console.log(data);
 
+                d3.sparql(wikiData, basicQuery).then( function (basicData) {
 
+                    basicData.forEach(function (arrayItem) {
+                        if(typeof arrayItem.subjLabel != Date)
+                        {
+                            queryName = arrayItem.subjLabel
+                        }
+                    })
 
+                    console.log(queryName);
 
                 function getRandomData(ordinal = false) {
                     var groups = 1;
@@ -116,7 +142,8 @@
                     data = sortedData;
 
                     return [...Array(NGROUPS).keys()].map(i => ({
-                        group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
+                        //group: document.getElementById('textID').value,                          //left hand side of grid, need to make query name, currently set as data[0].oName
+                        group: queryName,
                         data: getGroupData()
                     }));
 
@@ -153,8 +180,8 @@
                             });
                         }
                     }
-                }
-                let scale = d3.scaleOrdinal(['#E67B7B', '#FF8F00', '#FFF300', '#6AD96A', '#6A8AD9', '#726AD9', '#C16AD9', '#9D6F6F']);    // red, orange, yellow, green, blue, lilac, purple
+                }                             //red      orange      yellow      green     brown      purple      pink      blue
+                let scale = d3.scaleOrdinal(['#E67B7B', '#FF8F00', '#FFF300', '#6AD96A', '#9D6F6F', '#726AD9', '#C16AD9', '#6A8AD9']);    // red, orange, yellow, green, blue, lilac, purple
 
                 function segmentClick(segment) {
                     console.log(segment.target.__data__.label);
@@ -174,6 +201,7 @@
 
                 TimelinesChart()
                     .rightMargin(200)               // 200 pixels
+                    .leftMargin(100)
                     .maxHeight(1920)
                     .maxLineHeight(17)
                     .topMargin(40)
@@ -184,6 +212,7 @@
                     .zColorScale(scale)             // Uses scale above to color each oName
                     .zScaleLabel('Consumo')
                     (document.getElementById('chart_div'));
+                }); // end of basicInfo query
             }); //end of starQuery
         }); //end of birthQuery
     </script>
@@ -242,10 +271,6 @@
             style="width: 60%; height: 35px " />
         <input type='hidden' id='textID' />
         <!-- enter local host info -->
-        <!--<input type="button" id="btn" value="Submit"    
-       
-        onClick="javascript: window.open('C:/Users/soap1/Documents/GitHub/wikitimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
-    -->
         <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('C:/Users/daith/OneDrive/Documents/Software Engineering Project/sweng project/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
         <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
         <input type="button" class="searchbar-button" id="btn" value="Submit"
