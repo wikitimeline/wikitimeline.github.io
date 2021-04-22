@@ -369,8 +369,9 @@
       </header>
        <div class="page-heading">
         <h1 class="entry-title"></h1>
-        <h3 style="color: white;">How to Search?</h3>
-        <h5 style="color: white;">Enter a Resource name & choose one of the given options. Click on “Submit” to draw the timeline.</h5>
+        <h3 style="color: white;">How to Compare?</h3>
+        <h5 style="color: white;">Enter a Resource name in the First Search Bar & choose one of the given options.</h5>
+        <h5 style="color: white;">Enter another Resource name in the Second Search Bar & choose one of the given options. Click on "Compare" to draw the timeline.</h5>
         <h5 style="color: white;">Click on the timeline bars to jump to a new timeline.	</h5>
         <h5 style="color: white;">Select the area with your cursor to zoom-in on the timeline.</h5>
         <ul class="entry-breadcrumb">
@@ -384,7 +385,19 @@
     <div id = "Search2" class="searchbar2">
     <input type="text" class="searchbox2" placeholder="Enter a Second query..." id="text2" style="width: 60%; height: 35px "/>
     <input type='hidden' id='textID2' />
+<<<<<<< HEAD
     <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('https://wikitimeline.github.io/compare.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value + '&subj2=http://www.wikidata.org/entity/'+ document.getElementById('textID2').value, '_self');" />
+=======
+    <!-- enter local host info -->
+    <!--<input type="button" id="btn" value="Submit"    
+       
+        onClick="javascript: window.open('C:/Users/soap1/Documents/GitHub/wikitimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
+    --> 
+    <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('C:/Users/daith/OneDrive/Documents/Software Engineering Project/sweng project/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
+    <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value + '&subj2=http://www.wikidata.org/entity/'+ document.getElementById('textID2').value, '_self');" /> -->
+    <input type="button" class="searchbar-button" id="btn" value="Compare" onClick="javascript: window.open('https://wikitimeline.github.io/compare.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value + '&subj2=http://www.wikidata.org/entity/'+ document.getElementById('textID2').value, '_self');" />
+    <!-- <input type="button" class="compare-button" id="btn" value="Compare" onClick="window.open('https://wikitimeline.github.io/compare.html')";/> -->
+>>>>>>> 7a8b887b5adccce85884eb258da773f66d26ce54
     </div>
     <br> </br>
     <div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 100%; width: 100%;font-size: 11px; "></div>
