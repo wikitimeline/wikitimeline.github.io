@@ -13,7 +13,7 @@ The timeline chart is shown the description/relationships of the searched entity
 ## WikiTimeline demo:
 Here is our demo, with all the function been shown, please click on the link below to view
 <br><br>
-<br/>[![demo](https://img.youtube.com/vi/zj1vGBFcCIE/0.jpg)](https://www.youtube.com/embed/zj1vGBFcCIE)
+<br/>[![demo](https://img.youtube.com/vi/c7b0LTjZRVY/0.jpg)](https://www.youtube.com/embed/c7b0LTjZRVY)
 <br><br><br>
 To design and develop the WikiTimeline, we used JavaScript, HTML and CSS with additional libraries.
 <br>
