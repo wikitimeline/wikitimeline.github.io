@@ -39,8 +39,6 @@
         const subject = urlParams.get('subj');											// isolates subj eg: https://www.wikidata.org/wiki/Q937
 
         const subject2 = urlParams.get('subj2');
-        //console.log("This is subject2");
-        //console.log(subject2);
 
         // First SPARQL query for non-star triples
         // retrieves birth/start date & death/end date
@@ -267,8 +265,8 @@
                 {                      
                     //console.log("getSegments called");
                     const nSegments = data.length,
-                    //const   nSegments = 1,                                                          // ????
-                            segMaxLength = Math.round(((new Date()) - MINTIME) / nSegments);        // ????
+                    //const   nSegments = 1,                                                          
+                            segMaxLength = Math.round(((new Date()) - MINTIME) / nSegments);        
                     //console.log(segMaxLength);
                     let runLength = MINTIME;                                                        // earliest date in timeline?
                     return [...Array(nSegments).keys()].map(i => 
@@ -276,7 +274,7 @@
                         start = data[index].start,                              //every entry has a start date
                         end = data[index].end ? data[index].end : new Date();   //set end date to end date if present otherwise set to current date
 
-                        runLength = new Date(start.getTime() + segMaxLength);   // ???         
+                        runLength = new Date(start.getTime() + segMaxLength);           
 
                         return {
                             timeRange: [start, end],        // shows start date to end date on hover
@@ -386,15 +384,7 @@
     <div id = "Search2" class="searchbar2">
     <input type="text" class="searchbox2" placeholder="Enter a Second query..." id="text2" style="width: 60%; height: 35px "/>
     <input type='hidden' id='textID2' />
-    <!-- enter local host info -->
-    <!--<input type="button" id="btn" value="Submit"    
-       
-        onClick="javascript: window.open('C:/Users/soap1/Documents/GitHub/wikitimeline.github.io/newSearch.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" />
-    --> 
-    <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('C:/Users/daith/OneDrive/Documents/Software Engineering Project/sweng project/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value, '_self');" /> -->
-    <!-- <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('file:///F:/3rd%20Year/Semester2/SWENG/wikitimeline.github.io/search.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value + '&subj2=http://www.wikidata.org/entity/'+ document.getElementById('textID2').value, '_self');" /> -->
     <input type="button" class="searchbar-button" id="btn" value="Submit" onClick="javascript: window.open('https://wikitimeline.github.io/compare.html?subj=http://www.wikidata.org/entity/' + document.getElementById('textID').value + '&subj2=http://www.wikidata.org/entity/'+ document.getElementById('textID2').value, '_self');" />
-    <!-- <input type="button" class="compare-button" id="btn" value="Compare" onClick="window.open('https://wikitimeline.github.io/compare.html')";/> -->
     </div>
     <br> </br>
     <div id="chart_div" style="overflow-x: scroll; overflow-y: scroll; height: 100%; width: 100%;font-size: 11px; "></div>
@@ -491,7 +481,7 @@
 
     <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
 
-<!-- Added by Tanmay  -->
+
 <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="assets/js/lightgallery.min.js"></script>
 <script type="text/javascript" src="assets/js/parallax.min.js"></script>
